@@ -75,12 +75,10 @@ router.post("/user", verifyAdmin, async (req, res) => {
       return res.status(409).json({ msg: "Email already exists" });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
-
     const user = await User.create({
       username,
       email,
-      password: hashed,
+      password,
     });
 
     res.json({ msg: "User created", user });

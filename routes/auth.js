@@ -24,13 +24,10 @@ router.post("/register", async (req, res) => {
       return res.status(409).json({ msg: "User already exists" });
     }
 
-    // ✅ HASH PASSWORD
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const user = await User.create({
       username,
       email,
-      password: hashedPassword,
+      password,
     });
 
     const token = jwt.sign(
@@ -167,8 +164,8 @@ router.post("/reset-password/:token", async (req, res) => {
       return res.status(400).json({ msg: "Invalid or expired token" });
     }
 
-    // ✅ HASH NEW PASSWORD
-    user.password = await bcrypt.hash(password, 10);
+    // ✅ HASH NEW PASSWORD (Handled by Model)
+    user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
 
