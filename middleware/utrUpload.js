@@ -1,16 +1,14 @@
 import multer from "multer";
-import fs from "fs";
-import path from "path";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "../utils/cloudinary.js"; // Reuse existing config
 
-const dir = "./uploads/payments";
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, dir),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + "-" + Math.round(Math.random() * 1e9) + path.extname(file.originalname))
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "firecontests_payments",
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
+    transformation: [{ width: 1000, height: 1000, crop: "limit" }],
+  },
 });
 
 export const utrUpload = multer({ storage });
