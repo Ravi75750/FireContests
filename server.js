@@ -23,9 +23,14 @@ const __dirname = path.dirname(__filename);
 /* MIDDLEWARE */
 app.use(
   cors({
-    origin: "*", // change to frontend URL in production
+    origin: [
+      "https://firecontest.netlify.app",
+      "http://localhost:5173",
+      "http://localhost:5174",
+    ],
     credentials: true,
   })
+
 );
 app.use(express.json());
 
