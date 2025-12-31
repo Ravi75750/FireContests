@@ -36,7 +36,8 @@ app.use(
 app.use(express.json());
 
 /* STATIC FILES */
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+/* STATIC FILES (Local Dev Only - Vercel uses Object Storage usually) */
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 /* DATABASE CONNECTION UTILS */
 const connectDB = async () => {
