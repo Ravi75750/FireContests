@@ -88,4 +88,10 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
+/* 404 HANDLER */
+app.use((req, res) => {
+  console.log(`❌ [404] Route Not Found: ${req.originalUrl}`);
+  res.status(404).json({ msg: "Route not found", url: req.originalUrl });
+});
+
 export default app;
