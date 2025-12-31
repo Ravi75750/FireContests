@@ -125,7 +125,11 @@ router.post(
   upload.single("image"),
   async (req, res) => {
     try {
+      console.log("📝 [DEBUG] Creating Contest - Body:", req.body);
+
       const { title, entryFee, maxPlayers, matchTime, firstReward, secondReward, thirdReward } = req.body;
+
+      console.log("🏆 [DEBUG] Rewards extracted:", { firstReward, secondReward, thirdReward });
 
       if (!title || entryFee === undefined || !maxPlayers || !matchTime) {
         return res.status(400).json({
