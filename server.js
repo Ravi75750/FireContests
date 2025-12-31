@@ -38,11 +38,22 @@ app.use(express.json());
 /* STATIC FILES */
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-/* DATABASE */
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("🔥 MongoDB Connected"))
-  .catch((err) => console.error("❌ DB ERROR:", err));
+/* DATABASE CONNECTION UTILS */
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("🔥 MongoDB Connected");
+  } catch (err) {
+    console.error("❌ DB ERROR:", err);
+  }
+};
+
+/* DB MIDDLEWARE (Ensure DB is connected for every request) */
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 /* ROUTES */
 import announcementRoutes from "./routes/announcements.js";
@@ -58,11 +69,12 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/highlights", highlightRoutes);
 app.use("/api/announcements", announcementRoutes);
 
-/* START SERVER */
-// Only listen when run directly (not in Vercel)
+/* START SERVER (Local Development Only) */
 if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
   });
 }
 
