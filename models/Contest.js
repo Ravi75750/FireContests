@@ -25,6 +25,15 @@ const ContestSchema = new mongoose.Schema(
       required: true,
     },
 
+    /* ---------------- REWARDS ---------------- */
+    rewards: {
+      first: { type: String, default: "" },
+      second: { type: String, default: "" },
+      third: { type: String, default: "" },
+    },
+
+    /* ---------------- MATCH TIMING ---------------- */
+
     /* ---------------- MATCH TIMING ---------------- */
     matchTime: {
       type: Date,
@@ -70,14 +79,14 @@ const ContestSchema = new mongoose.Schema(
         default: null,
       },
       matchStartedAt: {
-  type: Date,
-  default: null,
-},
+        type: Date,
+        default: null,
+      },
 
-completionPromptAt: {
-  type: Date,
-  default: null,
-},
+      completionPromptAt: {
+        type: Date,
+        default: null,
+      },
 
     },
   },

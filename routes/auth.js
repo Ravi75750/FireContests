@@ -15,6 +15,12 @@ router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Email validation regex (basic standard)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ msg: "Invalid email format" });
+    }
+
     if (!username || !email || !password) {
       return res.status(400).json({ msg: "All fields are required" });
     }

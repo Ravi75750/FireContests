@@ -44,6 +44,8 @@ mongoose
   .catch((err) => console.error("❌ DB ERROR:", err));
 
 /* ROUTES */
+import announcementRoutes from "./routes/announcements.js";
+
 app.get("/", (req, res) => {
   res.send("API is running... 🚀");
 });
@@ -53,6 +55,7 @@ app.use("/api/contests", contestRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/highlights", highlightRoutes);
+app.use("/api/announcements", announcementRoutes);
 
 /* START SERVER */
 // Only listen when run directly (not in Vercel)

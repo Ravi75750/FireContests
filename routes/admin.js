@@ -104,6 +104,19 @@ router.get("/users", verifyAdmin, async (req, res) => {
 });
 
 /* ======================================================
+   DELETE USER (ADMIN)
+====================================================== */
+router.delete("/user/:id", verifyAdmin, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ msg: "User deleted successfully" });
+  } catch (err) {
+    console.error("DELETE USER ERROR:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+/* ======================================================
    CREATE CONTEST
 ====================================================== */
 router.post(
@@ -112,7 +125,7 @@ router.post(
   upload.single("image"),
   async (req, res) => {
     try {
-      const { title, entryFee, maxPlayers, matchTime } = req.body;
+      const { title, entryFee, maxPlayers, matchTime, firstReward, secondReward, thirdReward } = req.body;
 
       if (!title || entryFee === undefined || !maxPlayers || !matchTime) {
         return res.status(400).json({
@@ -131,6 +144,11 @@ router.post(
         matchTime: new Date(matchTime),
         status: "UPCOMING",
         image: req.file.path, // ✅ Save full Cloudinary URL
+        rewards: {
+          first: firstReward || "",
+          second: secondReward || "",
+          third: thirdReward || ""
+        },
         participants: [],
         roomId: null,
         roomPass: null,
