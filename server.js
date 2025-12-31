@@ -69,6 +69,9 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/highlights", highlightRoutes);
 app.use("/api/announcements", announcementRoutes);
 
+// Redeploy trigger: Force Vercel rebuild
+console.log("🚀 Vercel Cold Start Checks...");
+
 /* START SERVER (Local Development Only) */
 if (process.env.NODE_ENV !== "production") {
   connectDB().then(() => {
