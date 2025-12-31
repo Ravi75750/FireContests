@@ -35,6 +35,12 @@ app.use(
 );
 app.use(express.json());
 
+/* DEBUG LOGGING */
+app.use((req, res, next) => {
+  console.log(`🔍 [LOG] ${req.method} ${req.url}`);
+  next();
+});
+
 /* STATIC FILES */
 /* STATIC FILES (Local Dev Only - Vercel uses Object Storage usually) */
 // app.use("/uploads", express.static(path.join(__dirname, "uploads")));
