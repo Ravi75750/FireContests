@@ -34,12 +34,17 @@ export const joinContest = async (req, res) => {
 
     /* 5️⃣ Prevent duplicate join */
     const alreadyJoined = contest.participants.some(
-      (p) => p.toString() === userId.toString()
+      (p) => (p.userId || p).toString() === userId.toString()
     );
 
     if (alreadyJoined) {
       return res.status(400).json({ msg: "Already joined this contest" });
     }
+
+    let participantData = {
+      userId,
+      slotIndex: contest.participants.length + 1,
+    };
 
     /* ======================================================
        6️⃣ PAYMENT CHECK — ONLY IF PAID CONTEST
@@ -56,11 +61,24 @@ export const joinContest = async (req, res) => {
           msg: "Payment not completed for this contest",
         });
       }
+
+      // Use details from Payment
+      participantData.inGameName = payment.fullName;
+      participantData.inGameId = payment.ffid;
+      participantData.upiId = payment.utr; // Mapping UTR to UPI ID for consistency
+    } else {
+      // ✅ FREE CONTEST - Get details from Request
+      const { inGameName, inGameId, upiId } = req.body;
+      if (!inGameName || !inGameId || !upiId) {
+        return res.status(400).json({ msg: "Missing game details or UPI ID" });
+      }
+      participantData.inGameName = inGameName;
+      participantData.inGameId = inGameId;
+      participantData.upiId = upiId;
     }
-    // ✅ FREE CONTEST SKIPS PAYMENT CHECK
 
     /* 7️⃣ Join contest */
-    contest.participants.push(userId);
+    contest.participants.push(participantData);
     await contest.save();
 
     return res.status(200).json({

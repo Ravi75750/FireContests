@@ -63,8 +63,14 @@ const ContestSchema = new mongoose.Schema(
     /* ---------------- PARTICIPANTS ---------------- */
     participants: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        slotIndex: Number,
+        inGameName: String,
+        inGameId: String,
+        upiId: String,
       },
     ],
 
