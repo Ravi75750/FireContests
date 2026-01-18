@@ -62,10 +62,15 @@ export const joinContest = async (req, res) => {
         });
       }
 
-      // Use details from Payment
-      participantData.inGameName = payment.fullName;
-      participantData.inGameId = payment.ffid;
-      participantData.upiId = payment.utr; // Mapping UTR to UPI ID for consistency
+      // Use details from Payment OR User Input (since user now fills modal)
+      // The user IS verified (payment exists), but we want the input details.
+      const { inGameName, inGameId, upiId } = req.body;
+
+      // Fallback to Payment details if for some reason input is missing (though frontend ensures it)
+      participantData.inGameName = inGameName || payment.fullName;
+      participantData.inGameId = inGameId || payment.ffid;
+      participantData.upiId = upiId || payment.utr;
+
     } else {
       // ✅ FREE CONTEST - Get details from Request
       const { inGameName, inGameId, upiId } = req.body;

@@ -17,6 +17,11 @@ const HighlightSchema = new mongoose.Schema(
       default: "",
     },
 
+    date: {
+      type: Date,
+      default: Date.now
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",

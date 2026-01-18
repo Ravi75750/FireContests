@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
     const contests = await Contest.find()
       .sort({ createdAt: -1 })
       .select(
-        "title entryFee maxPlayers image matchTime status roomId roomPass participants results"
+        "title entryFee maxPlayers image matchTime status roomId roomPass participants results rewards"
       );
 
     res.json(contests);

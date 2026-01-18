@@ -6,6 +6,7 @@ import Admin from "../models/admin.js";
 import Payment from "../models/payment.js";
 import User from "../models/user.js";
 import { upload } from "../middleware/upload.js";
+import { finishMatch } from "../controller/ContestController.js";
 
 const router = express.Router();
 
@@ -370,6 +371,11 @@ router.put(
     }
   }
 );
+
+/* ======================================================
+   FINISH MATCH (MANUAL END)
+====================================================== */
+router.post("/contest/:contestId/finish", verifyAdmin, finishMatch);
 
 /* ======================================================
    EXPORTS

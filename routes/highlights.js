@@ -7,20 +7,43 @@ const router = express.Router();
 /* ============================
    CREATE HIGHLIGHT (Auto Thumbnail)
 ============================ */
+/* ============================
+   CREATE HIGHLIGHT (Auto Thumbnail & YouTube Support)
+============================ */
 router.post("/", verifyAdmin, async (req, res) => {
   try {
-    const { title, videoURL } = req.body;
+    const { title, videoURL, date } = req.body;
 
     if (!title || !videoURL)
       return res.status(400).json({ msg: "Title & Video URL required" });
 
-    // Auto thumbnail
-    const autoThumb = `${videoURL}?preview=1`;
+    // Extract YouTube ID
+    // Supports: 
+    // - https://www.youtube.com/watch?v=VIDEO_ID
+    // - https://youtu.be/VIDEO_ID
+    // - https://www.youtube.com/embed/VIDEO_ID
+    let videoId = "";
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = videoURL.match(regex);
+    if (match && match[1]) {
+      videoId = match[1];
+    } else {
+      // Fallback or error if strict validation needed
+      console.warn("Could not extract YouTube ID from:", videoURL);
+      // For now, if extraction fails, we might just store the URL, but thumbnail won't work well.
+      // Let's assume user inputs valid YouTube links as requested.
+    }
+
+    // Auto thumbnail from YouTube
+    const autoThumb = videoId
+      ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+      : "/default-thumb.jpg";
 
     const highlight = await Highlight.create({
       title,
-      videoURL,
-      thumbnail: autoThumb
+      videoURL, // We store the full URL or we could store just ID. Keeping URL is safer for flexibility.
+      thumbnail: autoThumb,
+      date: date || Date.now()
     });
 
     res.json({
