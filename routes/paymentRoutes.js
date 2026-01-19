@@ -16,7 +16,7 @@ router.post("/submit", utrUpload.single("screenshot"), async (req, res) => {
     if (!userId) return res.status(400).json({ msg: "Missing userId" });
     if (!contestId) return res.status(400).json({ msg: "Missing contestId" });
     if (!fullName) return res.status(400).json({ msg: "Full name required" });
-    if (!ffid) return res.status(400).json({ msg: "Free Fire ID required" });
+    // if (!ffid) return res.status(400).json({ msg: "Free Fire ID required" });
     if (!utr) return res.status(400).json({ msg: "UTR required" });
 
     if (!req.file?.filename) {
@@ -153,6 +153,35 @@ router.get("/history/:userId", async (req, res) => {
     res.json(list);
   } catch (err) {
     console.error("Payment History Error:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+/* =======================================================
+   USER/ADMIN - DELETE PAYMENT
+   DELETE /api/payments/:id
+======================================================= */
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req.body; // Passed from frontend for ownership verification
+
+    const payment = await Payment.findById(id);
+    if (!payment) {
+      return res.status(404).json({ msg: "Payment not found" });
+    }
+
+    // Verify ownership (if userId is provided)
+    if (userId && String(payment.userId) !== String(userId)) {
+      // NOTE: Admin bypass could be added here if we had middleware, 
+      // but for now strict ownership check if userId passed.
+      return res.status(403).json({ msg: "Not authorized to delete this payment" });
+    }
+
+    await Payment.findByIdAndDelete(id);
+    res.json({ msg: "Payment deleted successfully" });
+  } catch (err) {
+    console.error("Delete Payment Error:", err);
     res.status(500).json({ msg: "Server error" });
   }
 });
