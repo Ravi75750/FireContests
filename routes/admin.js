@@ -132,9 +132,9 @@ router.post(
 
       console.log("🏆 [DEBUG] Rewards extracted:", { firstReward, secondReward, thirdReward });
 
-      if (!title || entryFee === undefined || !maxPlayers || !matchTime) {
+      if (!title || entryFee === undefined || !maxPlayers) {
         return res.status(400).json({
-          msg: "Title, entry fee, max players and match time are required",
+          msg: "Title, entry fee, and max players are required",
         });
       }
 
@@ -146,7 +146,8 @@ router.post(
         title,
         entryFee,
         maxPlayers,
-        matchTime: new Date(matchTime),
+        maxPlayers,
+        matchTime: matchTime ? new Date(matchTime) : null,
         status: "UPCOMING",
         image: req.file.path, // ✅ Save full Cloudinary URL
         rewards: {

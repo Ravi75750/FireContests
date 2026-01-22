@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
 import User from "../models/user.js";
+import Admin from "../models/admin.js";
 
 const router = express.Router();
 
@@ -81,6 +82,32 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
+
+    // ✅ NOTIFY ADMIN (Async - don't await)
+    // Find One Admin or All Admins to notify
+    // For now, we notify the FIRST admin found, or a specific super admin if we had that logic.
+    // Ideally, we might want to notify ALL admins.
+    // ✅ NOTIFY ADMIN (Async - don't await)
+    // Actually, I will add the import at the top in a separate tool call to be clean.
+
+    // Logic:
+    (async () => {
+      try {
+        // You might have multiple admins. Sending to the first one found or a specific env email.
+        // Let's try to find an admin.
+        const admin = await Admin.findOne();
+        if (admin && admin.email) {
+          const time = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+          await sendEmail({
+            to: admin.email,
+            subject: `🔔 New Login: ${user.username}`,
+            html: `<p>User <b>${user.username}</b> (${user.email}) logged in at ${time}.</p>`
+          });
+        }
+      } catch (e) {
+        console.error("Failed to notifiy admin:", e);
+      }
+    })();
 
     return res.json({
       msg: "Login successful",

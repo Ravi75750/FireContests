@@ -37,8 +37,8 @@ const ContestSchema = new mongoose.Schema(
     /* ---------------- MATCH TIMING ---------------- */
     matchTime: {
       type: Date,
-      required: true,
-      index: true, // ⚡ faster time queries
+      default: null, // ✅ Optional: Admin can set this later
+      index: true,
     },
 
     /* ---------------- MATCH STATUS ---------------- */
