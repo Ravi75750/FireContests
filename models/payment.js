@@ -13,7 +13,7 @@ const PaymentSchema = new mongoose.Schema(
       required: true,
     },
     fullName: { type: String, required: true },
-    ffid: { type: String, required: true },
+    ffid: { type: String },
     utr: {
       type: String,
       required: true,
